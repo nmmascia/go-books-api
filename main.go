@@ -10,9 +10,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
-
 	"github.com/gorilla/mux"
+	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 )
 
@@ -88,7 +87,6 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	godotenv.Load()
 	dbStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 	db, err := sql.Open("postgres", dbStr)
 	if err != nil {
