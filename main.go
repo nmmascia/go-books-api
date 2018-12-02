@@ -86,17 +86,19 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
-func main() {
+func createDB() *sql.DB {
 	dbStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 	db, err := sql.Open("postgres", dbStr)
+
 	if err != nil {
 		log.Fatal(err)
-	} else {
-		err = db.Ping()
-		if err != nil {
-			log.Fatal(err)
-		}
 	}
+
+	return db
+}
+
+func main() {
+	db := createDB()
 
 	router := mux.NewRouter()
 
