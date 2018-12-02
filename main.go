@@ -3,14 +3,14 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"net/http"
-
 	"math/rand"
+	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
+// Book a book struct
 type Book struct {
 	ID     string  `json:"id"`
 	Isbn   string  `json:"isbn"`
@@ -18,6 +18,7 @@ type Book struct {
 	Author *Author `json:"author"`
 }
 
+// Author an author struct
 type Author struct {
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
