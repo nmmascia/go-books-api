@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "encoding/json"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -22,8 +22,11 @@ type Author struct {
 	Lastname  string `json:"lastname"`
 }
 
-func getBooks(w http.ResponseWriter, r *http.Request) {
+var books []Book
 
+func getBooks(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(books)
 }
 
 func createBook(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +47,10 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
+
+	books = append(books, Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}})
+	books = append(books, Book{ID: "2", Isbn: "448744", Title: "Book Two", Author: &Author{Firstname: "Jane", Lastname: "Doe"}})
+
 	router.HandleFunc("/api/books", getBooks).Methods("GET")
 	router.HandleFunc("/api/books", createBook).Methods("POST")
 	router.HandleFunc("/api/books/{id}", getBook).Methods("GET")
