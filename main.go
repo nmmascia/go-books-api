@@ -1,13 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"strconv"
 
+	"github.com/joho/godotenv"
+
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 // Book a book struct
@@ -82,6 +88,18 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	godotenv.Load()
+	dbStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+	db, err := sql.Open("postgres", dbStr)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		err = db.Ping()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	router := mux.NewRouter()
 
 	books = append(books, Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}})
