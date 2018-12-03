@@ -49,10 +49,10 @@ func getBookHandler(db *sql.DB) http.HandlerFunc {
 		var book Book
 		row := db.QueryRow("SELECT id, isbn, title FROM books WHERE id=$1", params["id"])
 		switch err := row.Scan(&book.ID, &book.Isbn, &book.Title); err {
-		case sql.ErrNoRows:
-			w.WriteHeader(http.StatusNotFound)
 		case nil:
 			json.NewEncoder(w).Encode(book)
+		case sql.ErrNoRows:
+			w.WriteHeader(http.StatusNotFound)
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
 		}
@@ -70,6 +70,8 @@ func updateBookHandler(db *sql.DB) http.HandlerFunc {
 		switch err := row.Scan(&book.ID, &book.Isbn, &book.Title); err {
 		case nil:
 			json.NewEncoder(w).Encode(book)
+		case sql.ErrNoRows:
+			w.WriteHeader(http.StatusNotFound)
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
 		}
@@ -83,6 +85,8 @@ func deleteBookHandler(db *sql.DB) http.HandlerFunc {
 		switch _, err := db.Exec("DELETE FROM books where id = $1", params["id"]); err {
 		case nil:
 			w.WriteHeader(http.StatusOK)
+		case sql.ErrNoRows:
+			w.WriteHeader(http.StatusNotFound)
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
 		}
