@@ -30,9 +30,15 @@ func getBooksHandler(db *sql.DB) http.HandlerFunc {
 func createBookHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		// var book Book
-		// _ = json.NewDecoder(r.Body).Decode(&book)
-		// json.NewEncoder(w).Encode()
+		var book Book
+		_ = json.NewDecoder(r.Body).Decode(&book)
+		row := db.QueryRow("INSERT INTO books(isbn, title) VALUES($1, $2) returning id, isbn, title;", book.Isbn, book.Title)
+		switch err := row.Scan(&book.ID, &book.Isbn, &book.Title); err {
+		case nil:
+			json.NewEncoder(w).Encode(book)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
