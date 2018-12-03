@@ -23,7 +23,14 @@ type Book struct {
 func getBooksHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		// json.NewEncoder(w).Encode(books)
+		var books []Book
+		rows, _ := db.Query("SELECT id, isbn, title FROM books")
+		for rows.Next() {
+			var book Book
+			rows.Scan(&book.ID, &book.Isbn, &book.Title)
+			books = append(books, book)
+		}
+		json.NewEncoder(w).Encode(books)
 	}
 }
 
