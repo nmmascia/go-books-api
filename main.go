@@ -62,8 +62,17 @@ func getBookHandler(db *sql.DB) http.HandlerFunc {
 func updateBookHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		// params := mux.Vars(r)
-		// json.NewEncoder(w).Encode()
+		params := mux.Vars(r)
+		var book Book
+		book.ID = params["id"]
+		_ = json.NewDecoder(r.Body).Decode(&book)
+		row := db.QueryRow("UPDATE books SET isbn=$2, title=$3 WHERE id = $1 returning id, isbn, title;", book.ID, book.Isbn, book.Title)
+		switch err := row.Scan(&book.ID, &book.Isbn, &book.Title); err {
+		case nil:
+			json.NewEncoder(w).Encode(book)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
