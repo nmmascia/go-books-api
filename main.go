@@ -24,12 +24,19 @@ func getBooksHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		var books []Book
-		rows, _ := db.Query("SELECT id, isbn, title FROM books")
+		rows, err := db.Query("SELECT id, isbn, title FROM books")
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
 		for rows.Next() {
 			var book Book
 			rows.Scan(&book.ID, &book.Isbn, &book.Title)
 			books = append(books, book)
 		}
+
 		json.NewEncoder(w).Encode(books)
 	}
 }
