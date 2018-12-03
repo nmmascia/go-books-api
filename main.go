@@ -98,7 +98,7 @@ func createDB() *sql.DB {
 	db, err := sql.Open("postgres", dbStr)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	return db
