@@ -74,11 +74,11 @@ func main() {
 	db := createDB()
 	router := mux.NewRouter()
 
-	router.HandleFunc("/api/books", getBooksHandler(db)).Methods("GET")
-	router.HandleFunc("/api/books", createBookHandler(db)).Methods("POST")
-	router.HandleFunc("/api/books/{id}", getBookHandler(db)).Methods("GET")
-	router.HandleFunc("/api/books/{id}", updateBookHandler(db)).Methods("PUT")
-	router.HandleFunc("/api/books/{id}", deleteBookHandler(db)).Methods("DELETE")
+	router.HandleFunc("/api/books", getBooksHandler(db)).Methods(http.MethodGet)
+	router.HandleFunc("/api/books", createBookHandler(db)).Methods(http.MethodPost)
+	router.HandleFunc("/api/books/{id}", getBookHandler(db)).Methods(http.MethodGet)
+	router.HandleFunc("/api/books/{id}", updateBookHandler(db)).Methods(http.MethodPost)
+	router.HandleFunc("/api/books/{id}", deleteBookHandler(db)).Methods(http.MethodDelete)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
