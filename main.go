@@ -70,8 +70,13 @@ func updateBookHandler(db *sql.DB) http.HandlerFunc {
 func deleteBookHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		// params := mux.Vars(r)
-		// json.NewEncoder(w).Encode()
+		params := mux.Vars(r)
+		switch _, err := db.Exec("DELETE FROM books where id = $1", params["id"]); err {
+		case nil:
+			w.WriteHeader(http.StatusOK)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
