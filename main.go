@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -38,8 +39,17 @@ func createBookHandler(db *sql.DB) http.HandlerFunc {
 func getBookHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		// params := mux.Vars(r)
-		// json.NewEncoder(w).Encode()
+		params := mux.Vars(r)
+		var book Book
+		row := db.QueryRow("SELECT id, isbn, title FROM books WHERE id=$1", params["id"])
+		switch err := row.Scan(&book.ID, &book.Isbn, &book.Title); err {
+		case sql.ErrNoRows:
+			w.WriteHeader(http.StatusNotFound)
+		case nil:
+			json.NewEncoder(w).Encode(book)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
