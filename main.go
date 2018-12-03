@@ -98,7 +98,7 @@ func main() {
 	router.HandleFunc("/api/books", getBooksHandler(db)).Methods(http.MethodGet)
 	router.HandleFunc("/api/books", createBookHandler(db)).Methods(http.MethodPost)
 	router.HandleFunc("/api/books/{id}", getBookHandler(db)).Methods(http.MethodGet)
-	router.HandleFunc("/api/books/{id}", updateBookHandler(db)).Methods(http.MethodPost)
+	router.HandleFunc("/api/books/{id}", updateBookHandler(db)).Methods(http.MethodPut)
 	router.HandleFunc("/api/books/{id}", deleteBookHandler(db)).Methods(http.MethodDelete)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
